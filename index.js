@@ -1,11 +1,18 @@
 const express = require('express');
 
+const db = require('./models');
+
 const app = express();
+db.sequelize.sync();
 
 app.get('/', (req, res) => {
-  res.set('Hello Server');
+  res.send('Hello Server');
 });
 
-app.listen(8080, () => {
-  console.log(`server is running on http://localhost:8080`);
+app.get('/about', (req, res) => {
+  res.send('Hello about');
+});
+
+app.listen(3065, () => {
+  console.log(`server is running on http://localhost:3065`);
 });

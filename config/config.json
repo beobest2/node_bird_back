@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "reacttest",
+    "password": "react1234",
+    "database": "react_nodebird",
+    "host": "10.195.22.203",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "reacttest",
+    "password": "react1234",
+    "database": "react_nodebird",
+    "host": "10.195.22.203",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "reacttest",
+    "password": "react1234",
+    "database": "react_nodebird",
+    "host": "10.195.22.203",
+    "dialect": "mysql",
+    "operatorsAliases": false
+  }
+}
