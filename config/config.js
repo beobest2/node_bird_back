@@ -1,4 +1,8 @@
-{
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+module.exports = {
   "development": {
     "username": "reacttest",
     "password": "react1234",
@@ -22,5 +26,5 @@
     "host": "10.195.22.203",
     "dialect": "mysql",
     "operatorsAliases": false
-  }
-}
+  },
+};
