@@ -5,25 +5,25 @@ dotenv.config();
 module.exports = {
   "development": {
     "username": "reacttest",
-    "password": "react1234",
+    "password": process.env.DB_PASSWORD,
     "database": "react_nodebird",
-    "host": "10.195.22.203",
+    "host": "192.168.219.100",
     "dialect": "mysql",
     "operatorsAliases": false
   },
   "test": {
     "username": "reacttest",
-    "password": "react1234",
+    "password": process.env.DB_PASSWORD,
     "database": "react_nodebird",
-    "host": "10.195.22.203",
+    "host": "192.168.219.100",
     "dialect": "mysql",
     "operatorsAliases": false
   },
   "production": {
     "username": "reacttest",
-    "password": "react1234",
+    "password": process.env.DB_PASSWORD,
     "database": "react_nodebird",
-    "host": "10.195.22.203",
+    "host": "192.168.219.100",
     "dialect": "mysql",
     "operatorsAliases": false
   },
