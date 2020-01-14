@@ -2,14 +2,11 @@ const express = require('express');
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const { isLoggedIn } = require('./middleware');
 
 const router = express.Router();
 
-router.get('/', (req, res) => { // 회원 정보 가져오기
-  console.log(1);
-  if (!req.user) {
-    return res.status(401).send('you need to login');
-  }
+router.get('/', isLoggedIn, (req, res) => { // 회원 정보 가져오기
   const user = Object.assign({}, req.user.toJSON());
   delete user.password;
   return res.json(user);
