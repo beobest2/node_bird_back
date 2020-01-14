@@ -7,7 +7,7 @@ module.exports = {
     "username": "reacttest",
     "password": process.env.DB_PASSWORD,
     "database": "react_nodebird",
-    "host": "192.168.219.100",
+    "host": process.env.DB_HOST,
     "dialect": "mysql",
     "operatorsAliases": false
   },
@@ -15,7 +15,7 @@ module.exports = {
     "username": "reacttest",
     "password": process.env.DB_PASSWORD,
     "database": "react_nodebird",
-    "host": "192.168.219.100",
+    "host": process.env.DB_HOST,
     "dialect": "mysql",
     "operatorsAliases": false
   },
@@ -23,7 +23,7 @@ module.exports = {
     "username": "reacttest",
     "password": process.env.DB_PASSWORD,
     "database": "react_nodebird",
-    "host": "192.168.219.100",
+    "host": process.env.DB_HOST,
     "dialect": "mysql",
     "operatorsAliases": false
   },

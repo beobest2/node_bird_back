@@ -36,4 +36,29 @@ router.post('/images', (req, res) => {
 
 });
 
+router.get('/:id/comments', async (req, res, next) => {
+
+});
+
+router.post('/:id/comment', async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).send('you need to login');
+    }
+    const post = await db.Post.findOne({where: {id: req.params.id}});
+    if(!post){
+      return res.status(404).send('post not exists');
+    }
+    const newComment = await db.Comment.create({
+      PostId: post.id,
+      UserId: req.user.id,
+      content: req.body.content,
+    });
+    await post.addComment(newComment.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 module.exports = router;
