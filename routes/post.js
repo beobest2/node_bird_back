@@ -5,35 +5,6 @@ const router = express.Router();
 const db = require('../models');
 const { isLoggedIn } = require('./middleware');
 
-router.post('/', isLoggedIn, async (req, res, next) => { // POST /api/post
-  try {
-    const hashtags = req.body.content.match(/#[^\s]+/g);
-    const newPost = await db.Post.create({
-      content: req.body.content, 
-      UserId: req.user.id,
-    });
-    if (hashtags) {
-      const result = await Promise.all(hashtags.map(tag => db.Hashtag.findOrCreate({
-        where: { name: tag.slice(1).toLowerCase() },
-      })));
-      await newPost.addHashtags(result.map(r => r[0]));
-    }
-    // const User = await newPost.getUser();
-    // newPost.User = User;
-    // res.json(newPost);
-    const fullPost = await db.Post.findOne({
-      where: { id: newPost.id },
-      include: [{
-        model: db.User,
-      }],
-    });
-    res.json(fullPost);
-  } catch (e) {
-    console.error(e);
-    next(e);
-  }
-});
-
 const upload = multer({
   storage: multer.diskStorage({
     destination(req, file, done) {
@@ -47,6 +18,49 @@ const upload = multer({
   }),
   limits: {fileSize: 20 * 1024 * 1024 },
 });
+
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST /api/post
+  try {
+    const hashtags = req.body.content.match(/#[^\s]+/g);
+    const newPost = await db.Post.create({
+      content: req.body.content, 
+      UserId: req.user.id,
+    });
+    if (hashtags) {
+      const result = await Promise.all(hashtags.map(tag => db.Hashtag.findOrCreate({
+        where: { name: tag.slice(1).toLowerCase() },
+      })));
+      await newPost.addHashtags(result.map(r => r[0]));
+    }
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(req.body.image.map((image)=>{
+          return db.Image.create({src: image});
+        }));
+        await newPost.addImages(images);
+      } else {
+        const image = await db.Image.create({src: req.body.image});
+        await newPost.addImage(image);
+      }
+    }
+    // const User = await newPost.getUser();
+    // newPost.User = User;
+    // res.json(newPost);
+    const fullPost = await db.Post.findOne({
+      where: { id: newPost.id },
+      include: [{
+        model: db.User,
+      }, {
+        model: db.Image,
+      }],
+    });
+    res.json(fullPost);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 router.post('/images', upload.array('image'), (req, res) => {
   console.log(req.files.map(v => v.filename));
   res.json(req.files.map(v => v.filename));
