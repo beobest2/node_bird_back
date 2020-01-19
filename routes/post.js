@@ -118,4 +118,77 @@ router.post('/:id/comment', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.post('/:id/like', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({where: {id: req.params.id}});
+    if(!post) {
+      return res.status(404).send('post not exists');
+    }
+    await post.addLiker(req.user.id);
+    res.json({userId: req.user.id});
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.delete('/:id/like', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({where: {id: req.params.id}});
+    if(!post) {
+      return res.status(404).send('post not exists');
+    }
+    await post.removeLiker(req.user.id);
+    res.json({userId: req.user.id})
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.post('/:id/retweet', isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({where: {id: req.params.id}});
+    if (!post) {
+      return res.status(404).send('post not exists');
+    }
+    if (req.user.id === post.UserId) {
+      return res.status(403).send('cannot retweet your post');
+    }
+    const retweetTargetId = post.RetweetId || post.id;
+    const exPost = await db.Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      },
+    });
+    if (exPost) {
+      return res.status(403).send('already retweet');
+    }
+    const retweet = await db.Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: 'retweet!!',
+    });
+    const retweetWIthPrevPost = await db.Post.findOne({
+      where: {id: retweet.id},
+      include: [{
+        model: db.User,
+      }, {
+        model: db.Post,
+        as: 'Retweet',
+        include: [{
+          model: db.User,
+          attributes: ['id', 'nickname'],
+        }, {
+          model: db.Image,
+        }],
+      }],
+    });
+    res.json(retweetWIthPrevPost);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+})
+
 module.exports = router;
